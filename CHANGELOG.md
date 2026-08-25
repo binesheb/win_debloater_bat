@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 
 The project follows [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Changed
+- Added non-destructive GitHub Actions validation for batch-script structure without running Appx removal commands.
+
 ## [0.1.1] - 2026-08-20
 
 ### Changed

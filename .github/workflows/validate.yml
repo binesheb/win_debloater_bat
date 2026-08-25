@@ -1,0 +1,42 @@
+name: Validate batch utility
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.bat'
+      - '.github/workflows/validate.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.bat'
+      - '.github/workflows/validate.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate batch syntax without executing removals
+        shell: pwsh
+        run: |
+          $scripts = Get-ChildItem -Recurse -File -Filter *.bat
+          if (-not $scripts) {
+            throw 'No batch scripts found.'
+          }
+
+          foreach ($script in $scripts) {
+            $content = Get-Content -Raw -LiteralPath $script.FullName
+            if ($content -notmatch '(?m)^@echo off') {
+              throw "Missing @echo off in $($script.FullName)"
+            }
+            if ($content -notmatch '(?m)^setlocal\b') {
+              throw "Missing setlocal in $($script.FullName)"
+            }
+            if ($content -notmatch '(?m)^endlocal\b') {
+              throw "Missing endlocal in $($script.FullName)"
+            }
+          }

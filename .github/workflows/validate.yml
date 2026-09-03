@@ -20,7 +20,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Validate batch syntax without executing removals
+      - name: Validate batch structure without executing removals
         shell: pwsh
         run: |
           $scripts = Get-ChildItem -Recurse -File -Filter *.bat
@@ -38,5 +38,25 @@ jobs:
             }
             if ($content -notmatch '(?m)^endlocal\b') {
               throw "Missing endlocal in $($script.FullName)"
+            }
+
+            $ids = [regex]::Matches($content, '(?m)^set "app_id\[\d+\]=([^\r\n"]+)"$')
+            if (-not $ids) {
+              throw "No explicit Appx package identifiers found in $($script.FullName)"
+            }
+
+            foreach ($match in $ids) {
+              if ($match.Groups[1].Value -notmatch '^[A-Za-z0-9.]+$') {
+                throw "Malformed Appx package identifier '$($match.Groups[1].Value)' in $($script.FullName)"
+              }
+            }
+
+            if ($content -match '(?m)^set /a app_count=(\d+)$') {
+              $declaredCount = [int]$Matches[1]
+              if ($declaredCount -ne $ids.Count) {
+                throw "app_count ($declaredCount) does not match the number of app_id entries ($($ids.Count)) in $($script.FullName)"
+              }
+            } else {
+              throw "Missing app_count declaration in $($script.FullName)"
             }
           }

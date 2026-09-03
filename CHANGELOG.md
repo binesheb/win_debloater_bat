@@ -8,6 +8,7 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 - Added non-destructive GitHub Actions validation for batch-script structure without running Appx removal commands.
+- Added CI checks that keep explicit Appx package identifiers and the declared menu count consistent.
 
 ## [0.1.1] - 2026-08-20
 

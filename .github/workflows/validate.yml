@@ -40,9 +40,16 @@ jobs:
               throw "Missing endlocal in $($script.FullName)"
             }
 
+            $names = [regex]::Matches($content, '(?m)^set "app_name\[\d+\]=([^\r\n"]+)"$')
             $ids = [regex]::Matches($content, '(?m)^set "app_id\[\d+\]=([^\r\n"]+)"$')
+            if (-not $names) {
+              throw "No application menu entries found in $($script.FullName)"
+            }
             if (-not $ids) {
               throw "No explicit Appx package identifiers found in $($script.FullName)"
+            }
+            if ($names.Count -ne $ids.Count) {
+              throw "app_name entries ($($names.Count)) do not match app_id entries ($($ids.Count)) in $($script.FullName)"
             }
 
             foreach ($match in $ids) {

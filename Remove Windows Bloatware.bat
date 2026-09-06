@@ -62,8 +62,10 @@ if errorlevel 2 goto end
 
 for %%i in (!selected_indexes!) do (
   echo Removing !app_name[%%i]!...
-  powershell -NoProfile -ExecutionPolicy Bypass -Command "$pkg=Get-AppxPackage -Name '!app_id[%%i]!'; if($pkg){$pkg ^| Remove-AppxPackage -ErrorAction Stop; exit 0}else{Write-Host 'Not installed for the current user.'; exit 0}"
-  if errorlevel 1 (
+  powershell -NoProfile -ExecutionPolicy Bypass -Command "$pkg=Get-AppxPackage -Name '!app_id[%%i]!'; if($pkg){$pkg ^| Remove-AppxPackage -ErrorAction Stop; exit 0}else{Write-Host 'Not installed for the current user.'; exit 2}"
+  if errorlevel 2 (
+    echo !app_name[%%i]! is not installed for the current user.
+  ) else if errorlevel 1 (
     echo Failed to remove !app_name[%%i]!.
   ) else (
     echo Done.

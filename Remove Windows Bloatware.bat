@@ -30,13 +30,14 @@ set "app_id[10]=Microsoft.Getstarted"
 set "app_name[11]=Phone Link"
 set "app_id[11]=Microsoft.YourPhone"
 set /a app_count=12
+set /a last_index=app_count-1
 
 :prompt
 cls
 echo Select applications to remove:
 echo Enter numbers separated by spaces, or press Enter to cancel.
 echo.
-for /L %%i in (0,1,11) do (
+for /L %%i in (0,1,!last_index!) do (
   set /a number=%%i+1
   echo !number!. !app_name[%%i]!
 )

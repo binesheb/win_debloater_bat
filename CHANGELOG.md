@@ -7,6 +7,7 @@ The project follows [Semantic Versioning](https://semver.org/).
 ## Unreleased
 
 ### Changed
+- Report Appx packages that are not installed separately from successful removals.
 - Added non-destructive GitHub Actions validation for batch-script structure without running Appx removal commands.
 - Added CI checks that keep explicit Appx package identifiers and the declared menu count consistent.
 

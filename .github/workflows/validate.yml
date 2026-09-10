@@ -57,10 +57,25 @@ jobs:
               throw "app_name entries ($($names.Count)) do not match app_id entries ($($ids.Count)) in $($script.FullName)"
             }
 
+            $seenIds = @{}
             foreach ($match in $ids) {
-              if ($match.Groups[1].Value -notmatch '^[A-Za-z0-9.]+$') {
-                throw "Malformed Appx package identifier '$($match.Groups[1].Value)' in $($script.FullName)"
+              $packageId = $match.Groups[1].Value
+              if ($packageId -notmatch '^[A-Za-z0-9.]+$') {
+                throw "Malformed Appx package identifier '$packageId' in $($script.FullName)"
               }
+              if ($seenIds.ContainsKey($packageId)) {
+                throw "Duplicate Appx package identifier '$packageId' in $($script.FullName)"
+              }
+              $seenIds[$packageId] = $true
+            }
+
+            $seenNames = @{}
+            foreach ($match in $names) {
+              $displayName = $match.Groups[1].Value
+              if ($seenNames.ContainsKey($displayName)) {
+                throw "Duplicate application menu name '$displayName' in $($script.FullName)"
+              }
+              $seenNames[$displayName] = $true
             }
 
             if ($content -match '(?m)^set /a app_count=(\d+)$') {

@@ -50,7 +50,10 @@ for %%i in (%selection%) do (
   set /a index=%%i-1
   if !index! LSS 0 goto invalid
   if !index! GEQ %app_count% goto invalid
-  set "selected_indexes=!selected_indexes! !index!"
+  if not defined selected[!index!] (
+    set "selected[!index!]=1"
+    set "selected_indexes=!selected_indexes! !index!"
+  )
 )
 
 echo.

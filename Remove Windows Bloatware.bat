@@ -46,7 +46,7 @@ set /p "selection=Selection: "
 if not defined selection goto end
 
 set "selected_indexes="
-for %%i in (%selection%) do (
+for %%i in (!selection!) do (
   set /a index=%%i-1
   if !index! LSS 0 goto invalid
   if !index! GEQ %app_count% goto invalid

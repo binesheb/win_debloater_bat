@@ -4,6 +4,15 @@ setlocal EnableExtensions EnableDelayedExpansion
 echo Windows Debloater (Batch)
 echo.
 
+rem Refuse to continue when not elevated; package removal otherwise fails per-item.
+net session >nul 2>&1
+if errorlevel 1 (
+  echo Administrator privileges are required to remove Appx packages.
+  echo Right-click this file and select ^"Run as administrator^".
+  pause
+  goto end
+)
+
 rem Keep package identities explicit. Display names are used only for the menu.
 set "app_name[0]=3D Viewer"
 set "app_id[0]=Microsoft.Microsoft3DViewer"

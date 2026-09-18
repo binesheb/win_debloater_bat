@@ -45,6 +45,8 @@ set "selection="
 set /p "selection=Selection: "
 if not defined selection goto end
 
+rem Reset selection state so an invalid attempt cannot affect the next prompt.
+for /L %%i in (0,1,!last_index!) do set "selected[%%i]="
 set "selected_indexes="
 for %%i in (!selection!) do (
   set /a index=%%i-1

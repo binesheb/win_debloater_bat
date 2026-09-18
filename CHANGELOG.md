@@ -7,6 +7,7 @@ The project follows [Semantic Versioning](https://semver.org/).
 ## Unreleased
 
 ### Changed
+- Refuse to start package removal unless the batch utility is running with administrator privileges.
 - Ignore duplicate menu selections so a package is removed at most once per run.
 - Report Appx packages that are not installed separately from successful removals.
 - Added non-destructive GitHub Actions validation for batch-script structure without running Appx removal commands.

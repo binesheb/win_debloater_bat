@@ -86,4 +86,11 @@ jobs:
             } else {
               throw "Missing app_count declaration in $($script.FullName)"
             }
+
+            # Keep the cleanup scope intentionally limited to the current user's
+            # explicitly selected packages. Broader removal mechanisms are outside
+            # this utility's documented safety boundary.
+            if ($content -match '(?i)-AllUsers|Remove-AppxProvisionedPackage|Remove-AppxPackage\s+-Package') {
+              throw "Unsafe broad Appx removal command detected in $($script.FullName)"
+            }
           }

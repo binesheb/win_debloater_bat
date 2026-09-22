@@ -45,8 +45,8 @@ jobs:
               throw "Missing endlocal in $($script.FullName)"
             }
 
-            $names = [regex]::Matches($content, '(?m)^set "app_name\[\d+\]=([^\r\n"]+)"$')
-            $ids = [regex]::Matches($content, '(?m)^set "app_id\[\d+\]=([^\r\n"]+)"$')
+            $names = [regex]::Matches($content, '(?m)^set "app_name\[(\d+)\]=([^\r\n"]+)"$')
+            $ids = [regex]::Matches($content, '(?m)^set "app_id\[(\d+)\]=([^\r\n"]+)"$')
             if (-not $names) {
               throw "No application menu entries found in $($script.FullName)"
             }
@@ -57,9 +57,17 @@ jobs:
               throw "app_name entries ($($names.Count)) do not match app_id entries ($($ids.Count)) in $($script.FullName)"
             }
 
+            $nameIndexes = @($names | ForEach-Object { [int]$_.Groups[1].Value } | Sort-Object)
+            $idIndexes = @($ids | ForEach-Object { [int]$_.Groups[1].Value } | Sort-Object)
+            for ($i = 0; $i -lt $names.Count; $i++) {
+              if ($nameIndexes[$i] -ne $i -or $idIndexes[$i] -ne $i) {
+                throw "Menu indexes must be contiguous and start at zero in $($script.FullName)"
+              }
+            }
+
             $seenIds = @{}
             foreach ($match in $ids) {
-              $packageId = $match.Groups[1].Value
+              $packageId = $match.Groups[2].Value
               if ($packageId -notmatch '^[A-Za-z0-9.]+$') {
                 throw "Malformed Appx package identifier '$packageId' in $($script.FullName)"
               }
@@ -71,7 +79,7 @@ jobs:
 
             $seenNames = @{}
             foreach ($match in $names) {
-              $displayName = $match.Groups[1].Value
+              $displayName = $match.Groups[2].Value
               if ($seenNames.ContainsKey($displayName)) {
                 throw "Duplicate application menu name '$displayName' in $($script.FullName)"
               }
